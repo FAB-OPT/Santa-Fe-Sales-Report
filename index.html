@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ระบบส่งยอดขาย Santa Fe</title>
+  <meta name="theme-color" content="#ff7a00" />
+
+  <style>
+    :root{
+      --orange:#ff7a00;
+      --orange2:#ff8f2b;
+      --bg:#f7e9dd;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:rgba(15,23,42,.10);
+      --shadow:0 14px 35px rgba(15,23,42,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html, body, h1, h2, h3, h4, h5, h6,
+    p, span, div, label, button, input, select, textarea, a{
+      font-family:'Sarabun', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif !important;
+      font-weight:400 !important;
+    }
+    body{
+      margin:0;
+      color:var(--text);
+      background:var(--bg);
+    }
+
+    /* ===== Header ===== */
+    .topHeader{
+      background:#fff;
+      border-bottom:1px solid rgba(15,23,42,.06);
+      box-shadow: 0 10px 22px rgba(15,23,42,.06);
+      position:sticky; top:0; z-index:10;
+    }
+    .topHeaderInner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:0 18px 14px 18px;
+      display:grid;
+      grid-template-columns: auto 1fr auto;
+      align-items:center;
+      gap:14px;
+      position:relative;
+    }
+    .brand{ transform: translateX(-10px) !important; }
+    .brand img{height:120px;width:auto;object-fit:contain;}
+    .pageTitle{
+      margin:0;
+      text-align:center;
+      transform: translateX(20px) !important;
+      font-size:40px !important;
+      font-weight:800 !important;
+      line-height:1.1;
+    }
+    .pageTitle small{
+      display:block;
+      font-size:14px;
+      font-weight:700;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .ver{
+      justify-self:end;
+      font-size:12px !important;
+      font-weight:400 !important;
+      color:#0b1a33;
+      background:#fff;
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:999px;
+      padding:7px 10px;
+      white-space:nowrap;
+      position:absolute !important;
+      top:12px !important;
+      right:38px !important;
+    }
+
+    @media (max-width:860px){
+      .topHeaderInner{
+        grid-template-columns: 140px 1fr;
+        grid-template-areas: "logo ver" "title title";
+        padding-top:0px !important;
+        padding-left:18px !important;
+        padding-right:18px !important;
+        overflow-x:hidden !important;
+      }
+      .brand{ grid-area:logo; transform: translateX(-10px) !important; }
+      .brand img{ height:110px !important; }
+      .pageTitle{
+        grid-area:title;
+        transform: translateX(-30px) !important;
+        font-size:28px !important;
+        font-weight:800 !important;
+      }
+      .ver{
+        grid-area:ver;
+        position:absolute !important;
+        top:8px !important;
+        right:22px !important;
+        font-size:11px !important;
+      }
+    }
+
+    /* ===== Main card ===== */
+    .wrap{max-width:1200px;margin:18px auto 36px;padding:0 18px;}
+    .panel{
+      background:var(--card);
+      border:1px solid rgba(15,23,42,.08);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+
+    /* ===== Section title as orange bar ===== */
+    .sectionTitle{
+      width:100% !important;
+      display:block !important;
+      text-align:center !important;
+      background:#ff7a00 !important;
+      color:#fff !important;
+      padding:10px 14px !important;
+      margin:16px 0 12px !important;
+      border-radius:12px !important;
+      font-size:18px !important;
+      font-weight:600 !important;
+      letter-spacing:.2px !important;
+    }
+    .sectionTitle .chip{display:none !important;}
+
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+    @media (max-width:980px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+    @media (max-width:640px){ .grid{grid-template-columns:1fr;} }
+
+    label{
+      display:block;
+      font-size:14px;
+      color:#0f172a;
+      font-weight:600 !important;
+      margin-bottom:6px;
+    }
+    input,select{
+      width:100%;
+      padding:12px 12px;
+      border:1px solid rgba(15,23,42,.12);
+      border-radius:14px;
+      background:#fff;
+      outline:none;
+      font-size:14px;
+    }
+    input:focus,select:focus{
+      border-color: rgba(255,122,0,.85);
+      box-shadow:0 0 0 4px rgba(255,122,0,.15);
+    }
+    input[readonly]{background:#f8fafc;}
+
+    .divider{height:1px;background:rgba(15,23,42,.08);margin:14px 0;}
+    .note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.35;}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px;justify-content:center}
+    button{
+      border:none;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:900 !important;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .btnPrimary{background:linear-gradient(135deg,var(--orange),var(--orange2));color:#fff;box-shadow:0 10px 16px rgba(255,122,0,.22);}
+    button:disabled{opacity:.65;cursor:not-allowed;box-shadow:none;}
+
+    .status{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.10);
+      background:#fff;
+      font-size:13px;
+      line-height:1.45;
+      white-space:pre-line;
+      display:none;
+    }
+    .status.ok{display:block;border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.08);color:#16a34a;}
+    .status.err{display:block;border-color:rgba(220,38,38,.35);background:rgba(220,38,38,.08);color:#dc2626;}
+
+    .footer{
+      margin-top:14px;
+      text-align:center;
+      font-size:12px;
+      color:rgba(255,122,0,.95);
+      font-weight:800 !important;
+      letter-spacing:.2px;
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="topHeader">
+    <div class="topHeaderInner">
+      <div class="brand">
+        <!-- โลโก้ (ฝัง Base64) -->
+        <img id="logoImg" alt="Santa Fe Happy Steak"
+             src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcMAAAC4CAYAAACfFIdoAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAADYHSURBVHhe7d13nFTV2cDx33NnGwssvTdFRFFRwYpGxRpbEiv26Gs0xq5Rkxhj70ZN1ETsGqOxJCZ2jb0gEZVmB5Qivbfts3Of949zLjs7bJlZBnZhnu/nM8nKzNy59TynH1FVxRhjjMlhQeo/GGOMMbnGgqExxpicZ8HQGGNMzrNgaIwxJudZMDTGGJPzLBgaY4zJeRYMjTHG5DwLhsYYY3KeBUNjjDE5z4KhMcaYnGfB0BhjTM6zYGiMMSbnWTA0xhiT8ywYGmOMyXkWDI0xxuQ8C4bGGGNyngVDY4wxOc+CoTHGmJxnwdAYY0zOs2BojDEm51kwNMYYk/MsGBpjjMl5FgyNMcbkPAuGxhhjcp4FQ2OMMTnPgqExxpicZ8HQGGNMzrNgaIwxJudZMDTGGJPzLBgaY4zJeRYMjTHG5DwLhsYYY3KeBUNjjDE5z4KhMcaYnGfB0BhjTM6zYGiMMSbnWTA0xhiT8ywYGmOMyXkWDI0xxuQ8C4bGGGNyngVDY4wxOc+CoTHGmJxnwdAYY0zOs2BojDEm51kwNMYYk/MsGBpjjMl5FgyNMcbkPAuGxhhjcp4FQ2OMMTnPgqExxpicZ8HQGGNMzrNgaIwxJuf9P2lJl0thXAJFAAAAAElFTkSuQmCC" />
+      </div>
+
+      <h1 class="pageTitle">
+        ระบบส่งยอดขาย (Sales Report)
+        <small></small>
+      </h1>
+
+      <div class="ver">Version 1.0 (20.12.2025)</div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <form id="salesForm" autocomplete="off">
+
+        <div class="sectionTitle">ส่วนที่ 1: ข้อมูลทั่วไป</div>
+        <div class="grid">
+          <div>
+            <label>1.1 ผู้จัดการเขตที่รับผิดชอบ</label>
+            <select id="manager" required></select>
+          </div>
+          <div>
+            <label>1.2 สาขา</label>
+            <select id="branch" required></select>
+          </div>
+          <div>
+            <label>1.3 วันที่ส่งข้อมูล</label>
+            <input id="submitDate" type="date" required />
+          </div>
+          <div>
+            <label>1.4 ช่วงเวลาที่ทำการส่งข้อมูล</label>
+            <select id="period" required></select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="sectionTitle">ส่วนที่ 2: Sale</div>
+        <div class="grid">
+          <div><label>2.1 Plan Sale</label><input id="planSale" type="number" min="0" step="0.01" required /></div>
+          <div><label>2.2 Actual Sale</label><input id="actualSale" type="number" min="0" step="0.01" required /></div>
+          <div><label>2.3 Dine In</label><input id="saleDineIn" type="number" min="0" step="0.01" required /></div>
+          <div><label>2.4 Take away</label><input id="saleTakeAway" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>2.5 Grab</label><input id="saleGrab" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>2.6 Line Man</label><input id="saleLineMan" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>2.7 Shopee Food</label><input id="saleShopeeFood" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div>
+            <label>ยอดรวมช่องทาง (คำนวณ)</label>
+            <input id="saleSum" type="text" readonly />
+            <div class="note" style="margin-top:6px">ต้องเท่ากับ Actual Sale</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="sectionTitle">ส่วนที่ 3: Trans</div>
+        <div class="grid">
+          <div><label>3.1 Total Trans</label><input id="totalTrans" type="number" min="0" step="0.01" required /></div>
+          <div><label>3.2 Dine In</label><input id="transDineIn" type="number" min="0" step="0.01" required /></div>
+          <div><label>3.3 Take away</label><input id="transTakeAway" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>3.4 Grab</label><input id="transGrab" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>3.5 Line Man</label><input id="transLineMan" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div><label>3.6 Shopee Food</label><input id="transShopeeFood" type="number" min="0" step="0.01" placeholder="0" /></div>
+          <div>
+            <label>ยอดรวมช่องทาง (คำนวณ)</label>
+            <input id="transSum" type="text" readonly />
+            <div class="note" style="margin-top:6px">ต้องเท่ากับ Total Trans</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="sectionTitle">ส่วนที่ 4: Customer & Labour</div>
+        <div class="grid">
+          <div><label>4.1 Customer</label><input id="customer" type="number" min="0" step="0.01" required /></div>
+          <div><label>4.2 Labour(hour)</label><input id="labourHour" type="number" min="0" step="0.01" required /></div>
+          <div><label>4.3 Labour(Baht)</label><input id="labourBaht" type="number" min="0" step="0.01" required /></div>
+          <div style="display:flex;align-items:flex-end;gap:10px;justify-content:flex-end"><div style="width:100%"></div></div>
+        </div>
+
+        <div class="actions">
+          <button id="btnSubmit" class="btnPrimary" type="submit">ส่งข้อมูล</button>
+        </div>
+
+        <div id="statusBox" class="status"></div>
+
+        <div class="footer">Prepared by Operations Department, FAB Food Holding</div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  // ✅ เปลี่ยน URL ได้ที่บรรทัดนี้
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyZPWYuR_Nt0emF2ce83K9am3-0bfSed77SJuRXSzdXR0uJQBdrM1w-2me4jIOPow4/exec";
+
+  const $ = (id) => document.getElementById(id);
+  const statusBox = $("statusBox");
+  const btnSubmit = $("btnSubmit");
+
+  function setStatus(type, msg){
+    statusBox.className = "status " + (type === "ok" ? "ok" : "err");
+    statusBox.textContent = msg;
+    statusBox.style.display = "block";
+  }
+  function clearStatus(){
+    statusBox.className = "status";
+    statusBox.textContent = "";
+    statusBox.style.display = "";
+  }
+
+  function numVal(id){
+    const raw = ($(id).value ?? "").toString().trim();
+    if (raw === "") return NaN;
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  function num0(id){
+    const n = numVal(id);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function fmt(n){ return Number.isFinite(n) ? n.toFixed(2) : ""; }
+
+  function fillSelect(sel, choices){
+    sel.innerHTML = "";
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = "— เลือก —";
+    sel.appendChild(opt0);
+
+    (choices || []).forEach(v => {
+      const o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      sel.appendChild(o);
+    });
+  }
+
+  // JSONP load config (CORS-safe)
+  function loadConfigJSONP(){
+    return new Promise((resolve, reject) => {
+      const cb = "cb_cfg_" + Date.now();
+      window[cb] = (res) => {
+        try{
+          if (!res || !res.ok) throw new Error("โหลดตัวเลือกไม่สำเร็จ");
+          fillSelect($("manager"), res.items?.manager || []);
+          fillSelect($("branch"), res.items?.branch || []);
+          fillSelect($("period"), res.items?.period || []);
+          resolve(true);
+        }catch(e){ reject(e); }
+        finally{
+          try{ delete window[cb]; }catch(_){}
+        }
+      };
+      const s = document.createElement("script");
+      s.src = WEB_APP_URL + "?mode=config&callback=" + cb;
+      s.onerror = () => reject(new Error("โหลดตัวเลือกไม่สำเร็จ (ตรวจสอบ Web App URL/สิทธิ์ Anyone)"));
+      document.body.appendChild(s);
+    });
+  }
+
+  function updateSums(){
+    const saleSum = num0("saleDineIn") + num0("saleTakeAway") + num0("saleGrab") + num0("saleLineMan") + num0("saleShopeeFood");
+    const transSum = num0("transDineIn") + num0("transTakeAway") + num0("transGrab") + num0("transLineMan") + num0("transShopeeFood");
+    $("saleSum").value = fmt(saleSum);
+    $("transSum").value = fmt(transSum);
+  }
+
+  function validateSectionNumbers(){
+    // >0 required
+    const gt0 = ["planSale","actualSale","saleDineIn","totalTrans","transDineIn","customer","labourHour","labourBaht"];
+    for (const id of gt0){
+      const v = numVal(id);
+      if (!(Number.isFinite(v) && v > 0)){
+        return `กรุณากรอกข้อมูลให้ถูกต้อง\nช่องนี้ต้องมากกว่า 0`;
+      }
+    }
+    // >=0 optional (blank allowed)
+    const ge0 = ["saleTakeAway","saleGrab","saleLineMan","saleShopeeFood","transTakeAway","transGrab","transLineMan","transShopeeFood"];
+    for (const id of ge0){
+      const raw = ($(id).value ?? "").toString().trim();
+      if (raw === "") continue;
+      const v = numVal(id);
+      if (!(Number.isFinite(v) && v >= 0)){
+        return `กรุณากรอกข้อมูลให้ถูกต้อง\nช่องนี้ต้องมากกว่าหรือเท่ากับ 0`;
+      }
+    }
+
+    // Sum checks
+    const saleSum = Number($("saleSum").value || 0);
+    const actual = numVal("actualSale");
+    if (Math.abs(saleSum - actual) > 0.009){
+      return "SALE_SUM_MISMATCH";
+    }
+
+    const transSum = Number($("transSum").value || 0);
+    const totalT = numVal("totalTrans");
+    if (Math.abs(transSum - totalT) > 0.009){
+      return "TRANS_SUM_MISMATCH";
+    }
+
+    return "";
+  }
+
+  function clearSaleMismatchFields(){
+    ["actualSale","saleDineIn","saleTakeAway","saleGrab","saleLineMan","saleShopeeFood"].forEach(id => $(id).value = "");
+    updateSums();
+  }
+  function clearTransMismatchFields(){
+    ["totalTrans","transDineIn","transTakeAway","transGrab","transLineMan","transShopeeFood"].forEach(id => $(id).value = "");
+    updateSums();
+  }
+
+  function postViaHiddenForm(actionUrl, fields){
+    const iframeName = "hidden_iframe_submit_" + Date.now();
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+
+    const form = document.createElement("form");
+    form.action = actionUrl;
+    form.method = "POST";
+    form.target = iframeName;
+    form.style.display = "none";
+
+    for (const [k,v] of Object.entries(fields || {})){
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = k;
+      input.value = (v === undefined || v === null) ? "" : String(v);
+      form.appendChild(input);
+    }
+
+    document.body.appendChild(form);
+
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        try{ form.remove(); }catch(e){}
+        setTimeout(()=>{ try{ iframe.remove(); }catch(e){} }, 1500);
+        resolve(true);
+      };
+      iframe.addEventListener("load", () => setTimeout(finish, 50));
+      setTimeout(finish, 4000);
+      form.submit();
+    });
+  }
+
+  (async () => {
+    try{
+      await loadConfigJSONP();
+      const d = new Date();
+      $("submitDate").value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+      updateSums();
+    }catch(e){
+      setStatus("err", (e.message || String(e)));
+    }
+  })();
+
+  ["saleDineIn","saleTakeAway","saleGrab","saleLineMan","saleShopeeFood",
+   "transDineIn","transTakeAway","transGrab","transLineMan","transShopeeFood"
+  ].forEach(id => $(id).addEventListener("input", updateSums));
+
+  $("salesForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearStatus();
+    updateSums();
+
+    // Section 1 required
+    if (!$("manager").value || !$("branch").value || !$("period").value || !$("submitDate").value){
+      alert("กรุณาระบุข้อมูลทุกช่อง (ส่วนที่ 1 ข้อมูลทั่วไป)");
+      setStatus("err","กรุณาระบุข้อมูลทุกช่อง (ส่วนที่ 1 ข้อมูลทั่วไป)");
+      return;
+    }
+
+    const v = validateSectionNumbers();
+    if (v === "SALE_SUM_MISMATCH"){
+      alert("ใส่ข้อมูลไม่ถูกต้อง\n\nผลรวม Sale ของ Dine In + Take away + Delivery ต้องเท่ากับ Actual Sale");
+      clearSaleMismatchFields();
+      return;
+    }
+    if (v === "TRANS_SUM_MISMATCH"){
+      alert("ใส่ข้อมูลไม่ถูกต้อง\n\nผลรวม Trans ของ Dine In + Take away + Delivery ต้องเท่ากับ Total Trans");
+      clearTransMismatchFields();
+      return;
+    }
+    if (v){
+      alert(v);
+      return;
+    }
+
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "กำลังส่ง...";
+
+    try{
+      const payload = {
+        // ส่วนที่ 1
+        manager: $("manager").value,
+        branch: $("branch").value,
+        submitDate: $("submitDate").value,
+        period: $("period").value,
+
+        // ส่วนที่ 2
+        planSale: numVal("planSale"),
+        actualSale: numVal("actualSale"),
+        saleDineIn: numVal("saleDineIn"),
+        saleTakeAway: num0("saleTakeAway"),
+        saleGrab: num0("saleGrab"),
+        saleLineMan: num0("saleLineMan"),
+        saleShopeeFood: num0("saleShopeeFood"),
+
+        // ส่วนที่ 3
+        totalTrans: numVal("totalTrans"),
+        transDineIn: numVal("transDineIn"),
+        transTakeAway: num0("transTakeAway"),
+        transGrab: num0("transGrab"),
+        transLineMan: num0("transLineMan"),
+        transShopeeFood: num0("transShopeeFood"),
+
+        // ส่วนที่ 4
+        customer: numVal("customer"),
+        labourHour: numVal("labourHour"),
+        labourBaht: numVal("labourBaht"),
+      };
+
+      // ส่งแบบ key-value และซ้ำ JSON payload/data
+      const fields = { ...payload };
+      fields.payload = JSON.stringify(payload);
+      fields.data = JSON.stringify(payload);
+
+      await postViaHiddenForm(WEB_APP_URL, fields);
+
+      alert("ส่งข้อมูลเรียบร้อย\nระบบได้รับข้อมูลแล้ว");
+      setStatus("ok","ส่งข้อมูลเรียบร้อย\nระบบได้รับข้อมูลแล้ว");
+      // ไม่ reset ส่วนที่ 1 ให้ผู้ใช้สะดวกกรอกซ้ำรอบถัดไป (ถ้าต้องการให้รีเซ็ตทั้งหมด บอกได้)
+    }catch(ex){
+      alert("เชื่อมต่อไม่ได้ (แนะนำเปิดผ่าน GitHub Pages หรือ localhost)");
+      setStatus("err","เชื่อมต่อไม่ได้ (แนะนำเปิดผ่าน GitHub Pages หรือ localhost)");
+    }finally{
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "ส่งข้อมูล";
+    }
+  });
+</script>
+</body>
+</html>
