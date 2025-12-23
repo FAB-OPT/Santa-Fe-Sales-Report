@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Santa Fe | ระบบส่งยอดขาย</title>
+  <style>
+    :root{
+      --orange:#f57c00;
+      --orange2:#ffb74d;
+      --bg:#fff7ed;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --danger:#ef4444;
+      --ok:#16a34a;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans Thai", sans-serif;
+      background: linear-gradient(180deg, #fff 0%, var(--bg) 70%);
+      color:var(--text);
+    }
+    header{
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:18px 16px;}
+    .brand{
+      display:flex; align-items:center; gap:14px;
+    }
+    .logo{
+      height:54px; width:auto; display:block;
+    }
+    .titlebox{line-height:1.15}
+    .titlebox h1{margin:0;font-size:20px}
+    .titlebox p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    .card{
+      margin:16px auto;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow: 0 10px 28px rgba(0,0,0,.06);
+      overflow:hidden;
+    }
+    .cardhead{
+      background: linear-gradient(90deg, var(--orange) 0%, #ff9800 60%, var(--orange2) 100%);
+      color:#fff;
+      padding:14px 16px;
+      font-weight:700;
+    }
+    .content{padding:16px}
+    .section{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      margin:12px 0;
+      background:#fff;
+    }
+    .section h2{
+      margin:0 0 10px;
+      font-size:16px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge{
+      background:#fff3e0;
+      color:#8a4b00;
+      border:1px solid #ffd7a8;
+      padding:2px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+    }
+    .field{grid-column: span 6;}
+    .field.full{grid-column: span 12;}
+    label{display:block;font-size:13px;color:#374151;margin-bottom:6px;font-weight:600}
+    select,input{
+      width:100%;
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+    }
+    input[type="number"]{text-align:right}
+    .hint{margin-top:6px;font-size:12px;color:var(--muted)}
+    .req{color:var(--danger);font-weight:800;margin-left:4px}
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:0 16px 16px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 14px;
+      font-weight:800;
+      cursor:pointer;
+      font-size:14px;
+    }
+    .btn-primary{background:var(--orange);color:#fff;flex:1}
+    .btn-secondary{background:#111827;color:#fff}
+    .btn-ghost{background:#fff;border:1px solid var(--border);color:#111827}
+    .loading{
+      color:var(--muted);
+      font-size:14px;
+      padding:10px 16px;
+    }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.45);
+      display:none; align-items:center; justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
+    .modal{
+      width:min(520px, 100%);
+      background:#fff;
+      border-radius:16px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .modal-top{
+      padding:14px 16px;
+      font-weight:900;
+      color:#fff;
+      background: linear-gradient(90deg, #111827 0%, #374151 100%);
+    }
+    .modal-body{padding:16px; color:#111827; font-size:14px; line-height:1.55}
+    .modal-actions{padding:0 16px 16px; display:flex; justify-content:flex-end; gap:10px}
+    .small{font-size:12px;color:var(--muted)}
+
+    @media (max-width:720px){
+      .field{grid-column: span 12;}
+      .logo{height:48px}
+      .titlebox h1{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap brand">
+    <!-- โลโก้ (แนะนำวางไฟล์ Logo Santa Fe.png ไว้โฟลเดอร์เดียวกับ HTML) -->
+    <img class="logo" alt="Santa Fe" src="data:image/png;base64,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" />
+    <div class="titlebox">
+      <h1>ระบบส่งยอดขาย Santa Fe</h1>
+      <p>ดึงคำถาม/ตัวเลือกจาก Google Form และส่งคำตอบเข้า Google Sheet อัตโนมัติ</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="cardhead">Sales Submission</div>
+    <div class="loading" id="loading">กำลังโหลดคำถามและตัวเลือกจาก Google Form…</div>
+
+    <form id="mainForm" class="content" style="display:none;">
+      <!-- SECTION 1 -->
+      <div class="section">
+        <h2><span class="badge">ส่วนที่ 1</span> ข้อมูลทั่วไป</h2>
+        <div class="grid">
+          <div class="field">
+            <label>1.1 ผู้จัดการเขตที่รับผิดชอบ<span class="req">*</span></label>
+            <select id="dm" required></select>
+            <div class="hint">ตัวเลือกดึงจาก Google Form</div>
+          </div>
+          <div class="field">
+            <label>1.2 สาขา<span class="req">*</span></label>
+            <select id="branch" required></select>
+            <div class="hint">ตัวเลือกดึงจาก Google Form</div>
+          </div>
+          <div class="field">
+            <label>1.3 วันที่ส่งข้อมูล<span class="req">*</span></label>
+            <input id="sendDate" type="date" required />
+          </div>
+          <div class="field">
+            <label>1.4 ช่วงเวลาที่ทำการส่งข้อมูล<span class="req">*</span></label>
+            <select id="period" required></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="section">
+        <h2><span class="badge">ส่วนที่ 2</span> Sale</h2>
+        <div class="grid">
+          <div class="field">
+            <label>2.1 Plan Sale<span class="req">*</span></label>
+            <input id="planSale" type="number" min="1" step="1" required />
+          </div>
+          <div class="field">
+            <label>2.2 Actual Sale<span class="req">*</span></label>
+            <input id="actualSale" type="number" min="1" step="1" required />
+          </div>
+
+          <div class="field">
+            <label>2.3 Dine In<span class="req">*</span></label>
+            <input id="saleDineIn" type="number" min="1" step="1" required />
+          </div>
+          <div class="field">
+            <label>2.4 Take away</label>
+            <input id="saleTakeAway" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field">
+            <label>2.5 Grab</label>
+            <input id="saleGrab" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field">
+            <label>2.6 Line Man</label>
+            <input id="saleLineMan" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field full">
+            <label>2.7 Shopee Food</label>
+            <input id="saleShopee" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+            <div class="hint">เงื่อนไข: 2.3–2.7 รวมกันต้องเท่ากับ 2.2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="section">
+        <h2><span class="badge">ส่วนที่ 3</span> Trans</h2>
+        <div class="grid">
+          <div class="field">
+            <label>3.1 Total Trans<span class="req">*</span></label>
+            <input id="totalTrans" type="number" min="1" step="1" required />
+          </div>
+          <div class="field">
+            <label>3.2 Dine In<span class="req">*</span></label>
+            <input id="transDineIn" type="number" min="1" step="1" required />
+          </div>
+          <div class="field">
+            <label>3.3 Take away</label>
+            <input id="transTakeAway" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field">
+            <label>3.4 Grab</label>
+            <input id="transGrab" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field">
+            <label>3.5 Line Man</label>
+            <input id="transLineMan" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+          </div>
+          <div class="field full">
+            <label>3.6 Shopee Food</label>
+            <input id="transShopee" type="number" min="0" step="1" placeholder="เว้นว่างได้" />
+            <div class="hint">เงื่อนไข: 3.2–3.6 รวมกันต้องเท่ากับ 3.1</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="section">
+        <h2><span class="badge">ส่วนที่ 4</span> Customer & Labour</h2>
+        <div class="grid">
+          <div class="field">
+            <label>4.1 Customer<span class="req">*</span></label>
+            <input id="customer" type="number" min="1" step="1" required />
+          </div>
+          <div class="field">
+            <label>4.2 Labour (hour)<span class="req">*</span></label>
+            <input id="labourHour" type="number" min="1" step="0.01" required />
+          </div>
+          <div class="field full">
+            <label>4.3 Labour (Baht)<span class="req">*</span></label>
+            <input id="labourBaht" type="number" min="1" step="0.01" required />
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn-ghost" type="button" id="btnReset" disabled>ล้างค่า</button>
+      <button class="btn-secondary" type="button" id="btnReload" disabled>โหลดตัวเลือกใหม่</button>
+      <button class="btn-primary" type="button" id="btnSubmit" disabled>ส่งยอดขาย</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-top" id="modalTitle">แจ้งเตือน</div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="modalClose">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /** =========================
+   * CONFIG
+   * ========================= */
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyblhzvKtBV5-qzlBGuuKSEHLOYL2gL0Z-OvLWyfxf0BhH1K5J3MgmzxTOdhIlXSSk/exec"; // <-- ใส่ Web App URL
+
+  /**
+   * แมพด้วย "Title" ของคำถามใน Google Form (แนะนำตั้งชื่อในฟอร์มให้ตรงนี้)
+   * ถ้าคุณเปลี่ยนคำถามในฟอร์ม ให้คง Title เดิม หรือมาแก้ map ตรงนี้ได้
+   */
+  const TITLE_MAP = {
+    dm: "1.1 ผู้จัดการเขตที่รับผิดชอบ",
+    branch: "1.2 สาขา",
+    sendDate: "1.3 วันที่ส่งข้อมูล",
+    period: "1.4 ช่วงเวลาที่ทำการส่งข้อมูล",
+
+    planSale: "2.1 Plan Sale",
+    actualSale: "2.2 Actual Sale",
+    saleDineIn: "2.3 Dine In",
+    saleTakeAway: "2.4 Take away",
+    saleGrab: "2.5 Grab",
+    saleLineMan: "2.6 Line Man",
+    saleShopee: "2.7 Shopee Food",
+
+    totalTrans: "3.1 Total Trans",
+    transDineIn: "3.2 Dine In",
+    transTakeAway: "3.3 Take away",
+    transGrab: "3.4 Grab",
+    transLineMan: "3.5 Line Man",
+    transShopee: "3.6 Shopee Food",
+
+    customer: "4.1 Customer",
+    labourHour: "4.2 Labour(hour)",
+    labourBaht: "4.3 Labour(Baht)"
+  };
+
+  let schema = null;          // {items:[{id,title,type,required,choices[]}]}
+  let titleToId = {};         // title -> itemId
+
+  /** =========================
+   * Helpers
+   * ========================= */
+  const $ = (id)=>document.getElementById(id);
+
+  function showModal(title, html){
+    $("modalTitle").textContent = title;
+    $("modalBody").innerHTML = html;
+    $("modalBackdrop").style.display = "flex";
+  }
+  function closeModal(){ $("modalBackdrop").style.display = "none"; }
+
+  function numOrZero(v){
+    if (v === "" || v === null || v === undefined) return 0;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }
+  function clearSaleFields(){
+    $("actualSale").value = "";
+    $("saleDineIn").value = "";
+    $("saleTakeAway").value = "";
+    $("saleGrab").value = "";
+    $("saleLineMan").value = "";
+    $("saleShopee").value = "";
+  }
+  function clearTransFields(){
+    $("totalTrans").value = "";
+    $("transDineIn").value = "";
+    $("transTakeAway").value = "";
+    $("transGrab").value = "";
+    $("transLineMan").value = "";
+    $("transShopee").value = "";
+  }
+
+  /** =========================
+   * Load schema & build selects
+   * ========================= */
+  async function loadSchema(){
+    $("loading").style.display = "block";
+    $("mainForm").style.display = "none";
+    setButtons(false);
+
+    const url = `${WEBAPP_URL}?mode=schema&_=${Date.now()}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error || "Load schema failed");
+
+    schema = data;
+    titleToId = {};
+    data.items.forEach(it => titleToId[it.title] = it.id);
+
+    // Build select options from Google Form choices (dm, branch, period)
+    fillSelectFromTitle("dm", TITLE_MAP.dm);
+    fillSelectFromTitle("branch", TITLE_MAP.branch);
+    fillSelectFromTitle("period", TITLE_MAP.period);
+
+    // date is input type="date" (we still send to form DATE item)
+    $("loading").style.display = "none";
+    $("mainForm").style.display = "block";
+    setButtons(true);
+  }
+
+  function fillSelectFromTitle(selectId, title){
+    const item = (schema.items || []).find(x => x.title === title);
+    const el = $(selectId);
+    el.innerHTML = "";
+
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = "— เลือก —";
+    el.appendChild(opt0);
+
+    if(item && item.choices && item.choices.length){
+      item.choices.forEach(c=>{
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        el.appendChild(opt);
+      });
+    } else {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "(ไม่มีตัวเลือกใน Google Form)";
+      el.appendChild(opt);
+    }
+  }
+
+  function setButtons(enabled){
+    $("btnSubmit").disabled = !enabled;
+    $("btnReset").disabled = !enabled;
+    $("btnReload").disabled = !enabled;
+  }
+
+  /** =========================
+   * Validation rules (ตามที่คุณกำหนด)
+   * ========================= */
+  function validateAll(){
+    // required selects & date
+    const requiredBasics = [
+      ["dm","ผู้จัดการเขต"],
+      ["branch","สาขา"],
+      ["sendDate","วันที่ส่งข้อมูล"],
+      ["period","ช่วงเวลา"]
+    ];
+    for(const [id, label] of requiredBasics){
+      if(!$(id).value){
+        showModal("กรอกข้อมูลไม่ครบ", `กรุณาระบุ <b>${label}</b> ให้ครบถ้วน`);
+        return false;
+      }
+    }
+
+    // section2 required numeric >0
+    const mustPos = [
+      ["planSale","Plan Sale"],
+      ["actualSale","Actual Sale"],
+      ["saleDineIn","Sale Dine In"],
+      ["totalTrans","Total Trans"],
+      ["transDineIn","Trans Dine In"],
+      ["customer","Customer"],
+      ["labourHour","Labour(hour)"],
+      ["labourBaht","Labour(Baht)"],
+    ];
+    for(const [id, label] of mustPos){
+      const v = Number($(id).value);
+      if(!Number.isFinite(v) || v <= 0){
+        showModal("ข้อมูลไม่ถูกต้อง", `ช่อง <b>${label}</b> ต้องเป็นตัวเลข และต้องมากกว่า 0`);
+        return false;
+      }
+    }
+
+    // optional >=0 (if filled)
+    const optNonNeg = [
+      "saleTakeAway","saleGrab","saleLineMan","saleShopee",
+      "transTakeAway","transGrab","transLineMan","transShopee"
+    ];
+    for(const id of optNonNeg){
+      const raw = $(id).value;
+      if(raw === "") continue; // allow blank
+      const v = Number(raw);
+      if(!Number.isFinite(v) || v < 0){
+        showModal("ข้อมูลไม่ถูกต้อง", `ช่อง <b>${id}</b> ต้องมากกว่าหรือเท่ากับ 0`);
+        return false;
+      }
+    }
+
+    // Sale sum validation: 2.3–2.7 must equal 2.2
+    const actual = Number($("actualSale").value);
+    const s = numOrZero($("saleDineIn").value)
+            + numOrZero($("saleTakeAway").value)
+            + numOrZero($("saleGrab").value)
+            + numOrZero($("saleLineMan").value)
+            + numOrZero($("saleShopee").value);
+
+    if (s !== actual){
+      showModal("ใส่ข้อมูลไม่ถูกต้อง",
+        `ผลรวม Sale ของ <b>Dine In + Take away + Delivery</b> ต้องเท่ากับ <b>Actual Sale</b><br><span class="small">ระบบจะล้างค่า: Actual Sale + 2.3–2.7</span>`
+      );
+      clearSaleFields();
+      return false;
+    }
+
+    // Trans sum validation: 3.2–3.6 must equal 3.1
+    const total = Number($("totalTrans").value);
+    const t = numOrZero($("transDineIn").value)
+            + numOrZero($("transTakeAway").value)
+            + numOrZero($("transGrab").value)
+            + numOrZero($("transLineMan").value)
+            + numOrZero($("transShopee").value);
+
+    if (t !== total){
+      showModal("ใส่ข้อมูลไม่ถูกต้อง",
+        `ผลรวม Trans ของ <b>Dine In + Take away + Delivery</b> ต้องเท่ากับ <b>Total Trans</b><br><span class="small">ระบบจะล้างค่า: Total Trans + 3.2–3.6</span>`
+      );
+      clearTransFields();
+      return false;
+    }
+
+    return true;
+  }
+
+  /** =========================
+   * Submit to Apps Script -> Google Form -> Google Sheet
+   * ========================= */
+  function buildAnswersPayload(){
+    // Convert UI values -> { itemId: value }
+    const answers = {};
+
+    // helper assign by title
+    function put(uiId, title){
+      const itemId = titleToId[title];
+      if(!itemId) return; // if not found, skip
+      answers[itemId] = $(uiId).value;
+    }
+
+    // SECTION 1
+    put("dm", TITLE_MAP.dm);
+    put("branch", TITLE_MAP.branch);
+    put("sendDate", TITLE_MAP.sendDate);
+    put("period", TITLE_MAP.period);
+
+    // SECTION 2
+    put("planSale", TITLE_MAP.planSale);
+    put("actualSale", TITLE_MAP.actualSale);
+    put("saleDineIn", TITLE_MAP.saleDineIn);
+    // optional: ช่อง Delivery (เว้นว่างได้) — จะส่งเป็น "0" ถ้าเว้นว่าง
+    function putValueByTitle(title, value){
+      const id = titleToId[title];
+      if(!id) return; // ถ้าไม่พบคำถามในฟอร์ม ให้ข้าม (กัน key undefined)
+      answers[id] = value;
+    }
+    putValueByTitle(TITLE_MAP.saleTakeAway, String(numOrZero($("saleTakeAway").value)));
+    putValueByTitle(TITLE_MAP.saleGrab,     String(numOrZero($("saleGrab").value)));
+    putValueByTitle(TITLE_MAP.saleLineMan,  String(numOrZero($("saleLineMan").value)));
+    putValueByTitle(TITLE_MAP.saleShopee,   String(numOrZero($("saleShopee").value)));
+
+    // SECTION 3
+    put("totalTrans", TITLE_MAP.totalTrans);
+    put("transDineIn", TITLE_MAP.transDineIn);
+    putValueByTitle(TITLE_MAP.transTakeAway, String(numOrZero($("transTakeAway").value)));
+    putValueByTitle(TITLE_MAP.transGrab,     String(numOrZero($("transGrab").value)));
+    putValueByTitle(TITLE_MAP.transLineMan,  String(numOrZero($("transLineMan").value)));
+    putValueByTitle(TITLE_MAP.transShopee,   String(numOrZero($("transShopee").value)));
+
+    // SECTION 4
+    put("customer", TITLE_MAP.customer);
+    put("labourHour", TITLE_MAP.labourHour);
+    put("labourBaht", TITLE_MAP.labourBaht);
+
+    return { answers };
+  }
+
+  async function submit(){
+    if(!schema){
+      showModal("ยังไม่พร้อม", "ยังโหลดข้อมูลจาก Google Form ไม่เสร็จ");
+      return;
+    }
+    if(!validateAll()) return;
+
+    $("btnSubmit").disabled = true;
+
+    try{
+      const payload = buildAnswersPayload();
+      const res = await fetch(WEBAPP_URL, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if(!data.ok) throw new Error(data.error || "Submit failed");
+
+      showModal("ส่งข้อมูลสำเร็จ", `ส่งข้อมูลเรียบร้อย<br>ระบบได้รับข้อมูลแล้ว`);
+      $("mainForm").reset();
+      // รีเซ็ต select ให้กลับไป "— เลือก —"
+      $("dm").value = "";
+      $("branch").value = "";
+      $("period").value = "";
+    } catch(err){
+      showModal("ส่งข้อมูลไม่สำเร็จ", String(err));
+    } finally{
+      $("btnSubmit").disabled = false;
+    }
+  }
+
+  /** =========================
+   * Wire up events
+   * ========================= */
+  $("modalClose").addEventListener("click", closeModal);
+  $("modalBackdrop").addEventListener("click", (e)=>{ if(e.target.id==="modalBackdrop") closeModal(); });
+
+  $("btnSubmit").addEventListener("click", submit);
+  $("btnReset").addEventListener("click", ()=>{
+    $("mainForm").reset();
+    $("dm").value = "";
+    $("branch").value = "";
+    $("period").value = "";
+  });
+  $("btnReload").addEventListener("click", async ()=>{
+    try{ await loadSchema(); }
+    catch(err){ showModal("โหลดไม่สำเร็จ", String(err)); }
+  });
+
+  // init
+  (async ()=>{
+    try{ await loadSchema(); }
+    catch(err){
+      $("loading").textContent = "โหลดไม่สำเร็จ: " + err;
+      setButtons(false);
+    }
+  })();
+</script>
+</body>
+</html>
